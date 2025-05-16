@@ -7,7 +7,6 @@ import { UsersRepository } from './users.repository';
 
 @Module({
   imports: [
-    DatabaseModule,
     DatabaseModule.forFeature([
       { name: UserDocument.name, schema: UserSchema },
     ]),
