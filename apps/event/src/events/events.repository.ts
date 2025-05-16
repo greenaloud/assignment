@@ -1,11 +1,11 @@
-import { AbstractRepository } from '@app/common';
+import { BaseRepository } from '@app/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { EventDocument } from './models/event.schema';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 
 @Injectable()
-export class EventsRepository extends AbstractRepository<EventDocument> {
+export class EventsRepository extends BaseRepository<EventDocument> {
   protected readonly logger = new Logger(EventsRepository.name);
 
   constructor(
