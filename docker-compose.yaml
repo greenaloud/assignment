@@ -1,0 +1,33 @@
+services:
+  event:
+    build:
+      context: .
+      dockerfile: ./apps/event/Dockerfile
+      target: dev
+    command: npm run start:dev event
+    ports:
+      - '3000:3000'
+    volumes:
+      - .:/app
+    env_file:
+      - ./apps/event/.env
+    depends_on:
+      - mongo
+  
+  auth:
+    build:
+      context: .
+      dockerfile: ./apps/auth/Dockerfile
+      target: dev
+    command: npm run start:dev auth
+    ports:
+      - '3001:3001'
+    volumes:
+      - .:/app
+    env_file:
+      - ./apps/auth/.env
+    depends_on:
+      - mongo
+  
+  mongo:
+    image: mongo
