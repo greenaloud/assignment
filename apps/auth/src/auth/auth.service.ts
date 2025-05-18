@@ -22,8 +22,6 @@ export class AuthService {
       expires.getSeconds() + this.configService.get('JWT_EXPIRATION'),
     );
 
-    console.log(user);
-
     const token = this.jwtService.sign(tokenPayload);
 
     response.cookie('Authentication', token, {
