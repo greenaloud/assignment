@@ -3,10 +3,15 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 
 @Schema({ versionKey: false })
 export class UserDocument extends BaseDocument {
-  @Prop()
+  @Prop({
+    required: true,
+    unique: true,
+  })
   email: string;
 
-  @Prop()
+  @Prop({
+    required: true,
+  })
   password: string;
 }
 

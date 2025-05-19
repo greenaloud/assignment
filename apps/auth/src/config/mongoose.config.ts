@@ -12,6 +12,7 @@ export class MongooseConfig implements MongooseOptionsFactory {
   createMongooseOptions(): MongooseModuleOptions {
     return {
       uri: this.configService.get<string>('MONGODB_URI'),
+      autoIndex: true,
     };
   }
 }
