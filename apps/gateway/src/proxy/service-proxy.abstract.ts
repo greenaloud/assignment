@@ -1,9 +1,11 @@
+import { PermissionType } from '@app/common/permissions/permissions';
 import { Request, Response } from 'express';
 import { RequestHandler } from 'http-proxy-middleware';
 
 export type RouteDefinition = {
   path: string;
   method: string;
+  requiredPermissions?: PermissionType[];
 };
 
 export abstract class ServiceProxy {
