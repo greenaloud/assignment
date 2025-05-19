@@ -14,7 +14,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
+  @Get('me')
   @UseGuards(JwtAuthGuard)
   async getUser(@CurrentUser() user: UserDocument) {
     return user;
