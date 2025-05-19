@@ -4,15 +4,25 @@ import { CreateUserDto } from './dto/create-user.dto';
 import * as bcrypt from 'bcryptjs';
 import { GetUserDto } from './dto/get-user.dto';
 import { UserDocument } from './models/user.schema';
+import { RolesRepository } from '../roles/roles.repository';
+import { SystemRole } from '@app/common/permissions/roles';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(
+    private readonly usersRepository: UsersRepository,
+    private readonly rolesRepository: RolesRepository,
+  ) {}
 
   async create(createUserDto: CreateUserDto): Promise<UserDocument> {
+    const userRole = await this.rolesRepository.findOne({
+      name: SystemRole.USER,
+    });
+
     return await this.usersRepository.create({
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
+      role: userRole,
     });
   }
 
