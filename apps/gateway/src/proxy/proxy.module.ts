@@ -1,17 +1,24 @@
-import { Module } from '@nestjs/common';
+import { DynamicModule, Module, Type } from '@nestjs/common';
 import { ProxyMiddleware } from './proxy.middleware';
-import { AuthServiceProxy } from './auth-service/auth-service.proxy';
+import { ConfigModule } from '@nestjs/config';
+import { ServiceProxy } from './service-proxy.abstract';
 
-@Module({
-  providers: [
-    AuthServiceProxy,
-    {
-      provide: 'SERVICE_PROXIES',
-      useFactory: (authProxy: AuthServiceProxy) => [authProxy],
-      inject: [AuthServiceProxy],
-    },
-    ProxyMiddleware,
-  ],
-  exports: ['SERVICE_PROXIES', ProxyMiddleware],
-})
-export class ProxyModule {}
+@Module({})
+export class ProxyModule {
+  static register(proxies: Type<ServiceProxy>[]): DynamicModule {
+    return {
+      module: ProxyModule,
+      imports: [ConfigModule],
+      providers: [
+        ...proxies,
+        {
+          provide: 'SERVICE_PROXIES',
+          useFactory: (...proxies: ServiceProxy[]) => proxies,
+          inject: proxies,
+        },
+        ProxyMiddleware,
+      ],
+      exports: ['SERVICE_PROXIES', ProxyMiddleware],
+    };
+  }
+}
