@@ -18,18 +18,18 @@ export class EventsService {
     return this.eventsRepository.find({});
   }
 
-  findOne(_id: string) {
-    return this.eventsRepository.findOne({ _id });
+  findOne(id: string) {
+    return this.eventsRepository.findOne({ _id: id });
   }
 
-  update(_id: string, updateEventDto: UpdateEventDto) {
+  update(id: string, updateEventDto: UpdateEventDto) {
     return this.eventsRepository.findOneAndUpdate(
-      { _id },
+      { _id: id },
       { $set: updateEventDto },
     );
   }
 
-  remove(_id: string) {
-    return this.eventsRepository.findOneAndDelete({ _id });
+  remove(id: string) {
+    return this.eventsRepository.deleteById(id);
   }
 }

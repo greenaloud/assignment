@@ -1,8 +1,10 @@
-import { BaseDocument } from '@app/common';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { HydratedDocument } from 'mongoose';
 
-@Schema({ versionKey: false })
-export class EventDocument extends BaseDocument {
+export type EventDocument = HydratedDocument<Event>;
+
+@Schema()
+export class Event {
   @Prop()
   name: string;
 
@@ -19,4 +21,4 @@ export class EventDocument extends BaseDocument {
   userId: string;
 }
 
-export const EventSchema = SchemaFactory.createForClass(EventDocument);
+export const EventSchema = SchemaFactory.createForClass(Event);

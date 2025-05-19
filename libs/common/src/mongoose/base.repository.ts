@@ -1,58 +1,81 @@
-import { Logger, NotFoundException } from '@nestjs/common';
-import { FilterQuery, Model, Types, UpdateQuery } from 'mongoose';
-import { BaseDocument } from './base.schema';
+import {
+  FilterQuery,
+  HydratedDocument,
+  Model,
+  ProjectionType,
+  QueryOptions,
+  Types,
+  UpdateQuery,
+} from 'mongoose';
 
-export abstract class BaseRepository<TDocument extends BaseDocument> {
-  protected abstract readonly logger: Logger;
+export abstract class BaseRepository<T, TDocument extends HydratedDocument<T>> {
+  constructor(protected readonly model: Model<T>) {}
 
-  constructor(protected readonly model: Model<TDocument>) {}
+  async create(partial: Partial<T>): Promise<TDocument> {
+    const createdDocument = new this.model(partial);
+    const savedDocument = await createdDocument.save();
 
-  async create(document: Omit<TDocument, '_id'>): Promise<TDocument> {
-    const createdDocument = new this.model({
-      ...document,
-      _id: new Types.ObjectId(),
-    });
-    return (await createdDocument.save()).toJSON() as unknown as TDocument;
+    return savedDocument as TDocument;
   }
 
-  async findOne(filterQuery: FilterQuery<TDocument>): Promise<TDocument> {
-    const document = await this.model
-      .findOne(filterQuery)
-      .lean<TDocument>(true);
+  async createMany(partials: Partial<T>[]): Promise<TDocument[]> {
+    const createdDocuments = await this.model.insertMany(partials);
 
-    if (!document) {
-      this.logger.warn('Document was not found with filterQuery', filterQuery);
-      throw new NotFoundException('Document was not found');
+    return createdDocuments as TDocument[];
+  }
+
+  async findById(
+    id: string,
+    projection?: ProjectionType<T> | null,
+    options?: QueryOptions<T> | null,
+  ): Promise<TDocument | null> {
+    if (!Types.ObjectId.isValid(id)) {
+      return null;
     }
+    const document = await this.model.findById(id, projection, options).exec();
 
-    return document;
+    return document as TDocument | null;
+  }
+
+  async findOne(
+    filter: FilterQuery<T>,
+    projection?: ProjectionType<T> | null,
+    options?: QueryOptions<T> | null,
+  ): Promise<TDocument | null> {
+    const document = await this.model
+      .findOne(filter, projection, options)
+      .exec();
+
+    return document as TDocument | null;
   }
 
   async findOneAndUpdate(
-    filterQuery: FilterQuery<TDocument>,
-    update: UpdateQuery<TDocument>,
-  ): Promise<TDocument> {
-    const document = await this.model
-      .findOneAndUpdate(filterQuery, update, {
-        new: true,
-      })
-      .lean<TDocument>(true);
+    filter: FilterQuery<T>,
+    update: UpdateQuery<T>,
+    options: QueryOptions<T> = { new: true },
+  ): Promise<TDocument | null> {
+    const updatedDocument = await this.model
+      .findOneAndUpdate(filter, update, options)
+      .exec();
 
-    if (!document) {
-      this.logger.warn('Document was not found with filterQuery', filterQuery);
-      throw new NotFoundException('Document was not found');
+    return updatedDocument as TDocument | null;
+  }
+
+  async find(
+    filter: FilterQuery<T> = {},
+    projection?: ProjectionType<T> | null,
+    options?: QueryOptions<T> | null,
+  ): Promise<TDocument[]> {
+    const documents = await this.model.find(filter, projection, options).exec();
+    return documents as TDocument[];
+  }
+
+  async deleteById(id: string): Promise<boolean> {
+    if (!Types.ObjectId.isValid(id)) {
+      return false;
     }
 
-    return document;
-  }
-
-  async find(filterQuery: FilterQuery<TDocument>): Promise<TDocument[]> {
-    return this.model.find(filterQuery).lean<TDocument[]>(true);
-  }
-
-  async findOneAndDelete(
-    filterQuery: FilterQuery<TDocument>,
-  ): Promise<TDocument> {
-    return this.model.findOneAndDelete(filterQuery).lean<TDocument>(true);
+    const result = await this.model.findByIdAndDelete(id).exec();
+    return !!result;
   }
 }

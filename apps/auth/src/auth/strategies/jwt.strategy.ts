@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { UsersService } from '../../users/users.service';
 import { Request } from 'express';
 import { TokenPayload } from '../interfaces/token-payload.interface';
+import { UserDocument } from '../../users/models/user.schema';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -20,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate({ userId }: TokenPayload) {
-    return this.usersService.getUser({ _id: userId });
+  async validate({ userId }: TokenPayload): Promise<UserDocument> {
+    return await this.usersService.getUser({ _id: userId });
   }
 }
