@@ -4,7 +4,7 @@ import {
   RequestHandler,
 } from 'http-proxy-middleware';
 import type { Request, Response } from 'express';
-import { AUTH_SERVICE } from '@app/common/constants/services';
+import { ServiceHost } from '@app/common/constants/services';
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 
@@ -16,8 +16,8 @@ export class AuthProxyMiddleware implements NestMiddleware {
     this.authProxy = createProxyMiddleware<Request, Response>({
       target: {
         protocol: 'http:',
-        host: AUTH_SERVICE,
-        port: this.configService.get<number>('AUTH_HTTP_PORT'),
+        host: ServiceHost.AUTH,
+        port: this.configService.get<number>('AUTH_SERVICE_HTTP_PORT'),
       },
       secure: false,
       on: { proxyReq: fixRequestBody },
