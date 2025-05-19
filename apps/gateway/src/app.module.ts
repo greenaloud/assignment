@@ -7,18 +7,20 @@ import {
 import { ConfigModule } from '@nestjs/config';
 import { validationSchema } from './config/validation.schema';
 import { LoggerModule } from '@app/common';
-import { AuthProxyMiddleware } from './middleware/auth-proxy.middleware';
+import { ProxyMiddleware } from './proxy/proxy.middleware';
+import { ProxyModule } from './proxy/proxy.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validationSchema }),
     LoggerModule,
+    ProxyModule,
   ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(AuthProxyMiddleware)
-      .forRoutes({ path: '/auth/login', method: RequestMethod.POST });
+      .apply(ProxyMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
