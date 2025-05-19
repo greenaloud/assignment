@@ -10,12 +10,13 @@ import { LoggerModule } from '@app/common';
 import { ProxyMiddleware } from './proxy/proxy.middleware';
 import { ProxyModule } from './proxy/proxy.module';
 import { AuthServiceProxy } from './proxy/auth-service/auth-service.proxy';
+import { EventServiceProxy } from './proxy/event-service/event-service.proxy';
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true, validationSchema }),
     LoggerModule,
-    ProxyModule.register([AuthServiceProxy]),
+    ProxyModule.register([AuthServiceProxy, EventServiceProxy]),
   ],
 })
 export class AppModule implements NestModule {
