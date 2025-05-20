@@ -13,14 +13,15 @@ import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
 import { UserInfo } from '@app/common/types/user-info.type';
 import { CurrentUser } from 'apps/auth/src/auth/current-user.decorator';
-import { JwtAuthGuard } from '@app/common/common-auth/guards/jwt-auth.guard';
+import { RequirePermissions } from '@app/common/common-auth/decorators/require-permissions.decorator';
+import { PermissionType } from '@app/common/permissions/permissions';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
+  @RequirePermissions(PermissionType.EVENT_WRITE)
   create(
     @Body() createEventDto: CreateEventDto,
     @CurrentUser() { id: userId }: UserInfo,
