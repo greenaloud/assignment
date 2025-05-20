@@ -7,10 +7,10 @@ import { EventsRepository } from './events.repository';
 export class EventsService {
   constructor(private readonly eventsRepository: EventsRepository) {}
 
-  create(createEventDto: CreateEventDto) {
+  create(createEventDto: CreateEventDto, userId: string) {
     return this.eventsRepository.create({
       ...createEventDto,
-      userId: '123',
+      userId,
     });
   }
 

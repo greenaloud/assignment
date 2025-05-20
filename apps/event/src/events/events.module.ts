@@ -4,10 +4,12 @@ import { EventsController } from './events.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { EventsRepository } from './events.repository';
 import { Event, EventSchema } from './models/event.schema';
+import { CommonAuthModule } from '@app/common/common-auth/common-auth.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }]),
+    CommonAuthModule,
   ],
   controllers: [EventsController],
   providers: [EventsService, EventsRepository],
