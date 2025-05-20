@@ -28,8 +28,6 @@ export class ProxyMiddleware implements NestMiddleware {
 
     const jwt = req.cookies?.Authentication;
 
-    console.log(jwt, authConfig);
-
     const serviceToken = await firstValueFrom(
       this.authClient
         .send<string>(
@@ -39,9 +37,7 @@ export class ProxyMiddleware implements NestMiddleware {
         .pipe(
           timeout(5000),
           catchError((error) => {
-            const rpcError = new RpcException(error);
-            console.log(rpcError);
-            throw rpcError;
+            throw new RpcException(error);
           }),
         ),
     );
