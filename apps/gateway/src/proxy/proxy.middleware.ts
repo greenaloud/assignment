@@ -42,7 +42,7 @@ export class ProxyMiddleware implements NestMiddleware {
         ),
     );
 
-    req.headers['x-service-token'] = `Bearer ${serviceToken}`;
+    req.headers['x-service-token'] = serviceToken;
 
     matchingProxy.handleRequest(req, res, next);
   }

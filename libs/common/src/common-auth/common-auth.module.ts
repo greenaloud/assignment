@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { CommonAuthJwtConfig } from './config/common-auth-jwt.config';
-import { AuthGuard } from './guards/auth.guard';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
-  imports: [JwtModule.registerAsync({ useClass: CommonAuthJwtConfig })],
-  providers: [AuthGuard],
-  exports: [AuthGuard, JwtModule],
+  imports: [],
+  providers: [JwtStrategy],
 })
 export class CommonAuthModule {}

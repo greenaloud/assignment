@@ -11,16 +11,16 @@ import {
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
 import { UpdateEventDto } from './dto/update-event.dto';
-import { AuthGuard } from '@app/common/common-auth/guards/auth.guard';
 import { UserInfo } from '@app/common/types/user-info.type';
 import { CurrentUser } from 'apps/auth/src/auth/current-user.decorator';
+import { JwtAuthGuard } from '@app/common/common-auth/guards/jwt-auth.guard';
 
 @Controller('events')
 export class EventsController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post()
-  @UseGuards(AuthGuard)
+  @UseGuards(JwtAuthGuard)
   create(
     @Body() createEventDto: CreateEventDto,
     @CurrentUser() { id: userId }: UserInfo,
