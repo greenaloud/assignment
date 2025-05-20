@@ -22,30 +22,33 @@ export class EventsController {
 
   @Post()
   @RequirePermissions(PermissionType.EVENT_WRITE)
-  create(
+  async create(
     @Body() createEventDto: CreateEventDto,
     @CurrentUser() { id: userId }: UserInfo,
   ) {
-    return this.eventsService.create(createEventDto, userId);
+    return await this.eventsService.create(createEventDto, userId);
   }
 
   @Get()
-  findAll() {
-    return this.eventsService.findAll();
+  async findAll() {
+    return await this.eventsService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.eventsService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.eventsService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateEventDto: UpdateEventDto) {
-    return this.eventsService.update(id, updateEventDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateEventDto: UpdateEventDto,
+  ) {
+    return await this.eventsService.update(id, updateEventDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.eventsService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.eventsService.remove(id);
   }
 }
