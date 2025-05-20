@@ -12,6 +12,7 @@ import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { PermissionType } from '@app/common/permissions/permissions';
+import { ToRpcException } from '@app/common/decorators/to-rpc-exception.decorator';
 
 type RouteAuthConfig = {
   isPublic: boolean;
@@ -33,6 +34,7 @@ export class AuthController {
   }
 
   @MessagePattern({ cmd: 'verify-permissions' })
+  @ToRpcException()
   async verifyPermissions(
     @Payload()
     data: {
