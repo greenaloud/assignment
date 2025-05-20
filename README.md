@@ -16,14 +16,6 @@
 └── ...
 ```
 
-## 기술 스택
-
-- NestJS - 백엔드 프레임워크
-- TypeScript - 프로그래밍 언어
-- Docker - 컨테이너화
-- Docker Compose - 다중 컨테이너 애플리케이션 관리
-- [추가 기술 스택]
-
 ## 로컬 개발 환경 설정
 
 ### 필수 조건
@@ -52,10 +44,3 @@ docker-compose up
 ### 접속 정보
 
 - Gateway API: http://localhost:2999
-- 서비스 A: http://localhost:3001 (컨테이너 내부에서만 접근 가능)
-- 서비스 B: http://localhost:3002 (컨테이너 내부에서만 접근 가능)
-- [추가 서비스 접속 정보]
-
-## 환경 변수
-
-필요한 환경 변수는 `.env` 파일에 정의할 수 있습니다. 예시 파일 `.env.example`을 참고하여 설정하세요.
