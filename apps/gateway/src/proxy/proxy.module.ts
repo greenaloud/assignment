@@ -3,7 +3,7 @@ import { ProxyMiddleware } from './proxy.middleware';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServiceProxy } from './service-proxy.abstract';
 import { ClientsModule, Transport } from '@nestjs/microservices';
-import { ServiceHost } from '@app/common/constants/services';
+import { ServiceToken } from '@app/common/constants/service.tokens';
 
 @Module({})
 export class ProxyModule {
@@ -14,7 +14,7 @@ export class ProxyModule {
         ConfigModule,
         ClientsModule.registerAsync([
           {
-            name: ServiceHost.AUTH,
+            name: ServiceToken.AUTH,
             useFactory: (configService: ConfigService) => ({
               transport: Transport.TCP,
               options: {

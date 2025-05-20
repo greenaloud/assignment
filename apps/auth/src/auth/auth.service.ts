@@ -10,7 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { TokenPayload } from './interfaces/token-payload.interface';
 import { PermissionType } from '@app/common/permissions/permissions';
 import { UsersRepository } from '../users/users.repository';
-import { ServiceHost } from '@app/common/constants/services';
+import { ServiceToken } from '@app/common/constants/service.tokens';
 import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
@@ -106,7 +106,7 @@ export class AuthService {
     const permissions = user?.role.permissions;
 
     return {
-      iss: ServiceHost.AUTH,
+      iss: ServiceToken.AUTH,
       sub: user?._id || 'anonymous',
       aud: 'internal-services',
       jti: uuidv4(),

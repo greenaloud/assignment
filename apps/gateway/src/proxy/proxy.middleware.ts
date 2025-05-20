@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ServiceProxy } from './service-proxy.abstract';
-import { ServiceHost } from '@app/common/constants/services';
+import { ServiceToken } from '@app/common/constants/service.tokens';
 import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { catchError, firstValueFrom, timeout } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { catchError, firstValueFrom, timeout } from 'rxjs';
 export class ProxyMiddleware implements NestMiddleware {
   constructor(
     @Inject('SERVICE_PROXIES') private readonly serviceProxies: ServiceProxy[],
-    @Inject(ServiceHost.AUTH) private readonly authClient: ClientProxy,
+    @Inject(ServiceToken.AUTH) private readonly authClient: ClientProxy,
   ) {}
 
   async use(req: Request, res: Response, next: (error?: Error) => void) {
