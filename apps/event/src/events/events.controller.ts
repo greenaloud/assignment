@@ -6,7 +6,6 @@ import {
   Patch,
   Param,
   Delete,
-  UseGuards,
 } from '@nestjs/common';
 import { EventsService } from './events.service';
 import { CreateEventDto } from './dto/create-event.dto';
@@ -40,6 +39,7 @@ export class EventsController {
   }
 
   @Patch(':id')
+  @RequirePermissions(PermissionType.EVENT_WRITE)
   async update(
     @Param('id') id: string,
     @Body() updateEventDto: UpdateEventDto,
@@ -48,6 +48,7 @@ export class EventsController {
   }
 
   @Delete(':id')
+  @RequirePermissions(PermissionType.EVENT_DELETE)
   async remove(@Param('id') id: string) {
     return await this.eventsService.remove(id);
   }
