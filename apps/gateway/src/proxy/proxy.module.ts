@@ -1,14 +1,31 @@
 import { DynamicModule, Module, Type } from '@nestjs/common';
 import { ProxyMiddleware } from './proxy.middleware';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServiceProxy } from './service-proxy.abstract';
+import { ClientsModule, Transport } from '@nestjs/microservices';
+import { ServiceHost } from '@app/common/constants/services';
 
 @Module({})
 export class ProxyModule {
   static register(proxies: Type<ServiceProxy>[]): DynamicModule {
     return {
       module: ProxyModule,
-      imports: [ConfigModule],
+      imports: [
+        ConfigModule,
+        ClientsModule.registerAsync([
+          {
+            name: ServiceHost.AUTH,
+            useFactory: (configService: ConfigService) => ({
+              transport: Transport.TCP,
+              options: {
+                host: configService.get('AUTH_SERVICE_HOST'),
+                port: configService.get('AUTH_TCP_PORT'),
+              },
+            }),
+            inject: [ConfigService],
+          },
+        ]),
+      ],
       providers: [
         ...proxies,
         {
@@ -18,7 +35,7 @@ export class ProxyModule {
         },
         ProxyMiddleware,
       ],
-      exports: ['SERVICE_PROXIES', ProxyMiddleware],
+      exports: ['SERVICE_PROXIES', ProxyMiddleware, ClientsModule],
     };
   }
 }

@@ -1,16 +1,24 @@
-import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ServiceProxy } from './service-proxy.abstract';
+import { ServiceHost } from '@app/common/constants/services';
+import { ClientProxy, RpcException } from '@nestjs/microservices';
+import { catchError, firstValueFrom, timeout } from 'rxjs';
 
 @Injectable()
 export class ProxyMiddleware implements NestMiddleware {
   constructor(
     @Inject('SERVICE_PROXIES') private readonly serviceProxies: ServiceProxy[],
+    @Inject(ServiceHost.AUTH) private readonly authClient: ClientProxy,
   ) {}
 
-  use(req: Request, res: Response, next: (error?: Error) => void) {
-    const path = req.path;
-    const method = req.method;
+  async use(req: Request, res: Response, next: (error?: Error) => void) {
+    const { path, method } = req;
 
     const matchingProxy = this.serviceProxies.find((handler) =>
       handler.canHandle(path, method),
@@ -20,6 +28,30 @@ export class ProxyMiddleware implements NestMiddleware {
       next();
       return;
     }
+
+    const authConfig = matchingProxy.getAuthConfig(path, method);
+
+    const jwt = req.cookies?.Authentication;
+
+    console.log(jwt, authConfig);
+
+    const serviceToken = await firstValueFrom(
+      this.authClient
+        .send<string>(
+          { cmd: 'verify-permissions' },
+          { authenticationToken: jwt, authConfig },
+        )
+        .pipe(
+          timeout(5000),
+          catchError((error) => {
+            const rpcError = new RpcException(error);
+            console.log(rpcError);
+            throw rpcError;
+          }),
+        ),
+    );
+
+    req.headers['x-service-token'] = `Bearer ${serviceToken}`;
 
     matchingProxy.handleRequest(req, res, next);
   }

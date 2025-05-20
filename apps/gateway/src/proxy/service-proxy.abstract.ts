@@ -5,6 +5,11 @@ import { RequestHandler } from 'http-proxy-middleware';
 export type RouteDefinition = {
   path: string;
   method: string;
+  authConfig: RouteAuthConfig;
+};
+
+export type RouteAuthConfig = {
+  isPublic: boolean;
   requiredPermissions?: PermissionType[];
 };
 
@@ -22,12 +27,27 @@ export abstract class ServiceProxy {
 
   canHandle(path: string, method: string): boolean {
     return this.routes.some(
-      (rule) => this.pathMatches(rule.path, path) && rule.method === method,
+      (definition) =>
+        this.pathMatches(definition.path, path) && definition.method === method,
     );
   }
 
   handleRequest(req: Request, res: Response, next: (error?: Error) => void) {
     this.proxyHandler(req, res, next);
+  }
+
+  getAuthConfig(path: string, method: string): RouteAuthConfig {
+    const routeDefinition = this.routes.find(
+      (definition) =>
+        this.pathMatches(definition.path, path) && definition.method === method,
+    );
+
+    const authConfig = routeDefinition.authConfig;
+
+    return {
+      ...authConfig,
+      requiredPermissions: authConfig.requiredPermissions ?? [],
+    };
   }
 
   /**
