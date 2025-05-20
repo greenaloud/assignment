@@ -4,10 +4,8 @@ import { HydratedDocument, Schema as MongooseSchema } from 'mongoose';
 export type RewardRequestDocument = HydratedDocument<RewardRequest>;
 
 export enum RequestStatus {
-  PENDING = 'PENDING',
   APPROVED = 'APPROVED',
   REJECTED = 'REJECTED',
-  COMPLETED = 'COMPLETED',
 }
 
 @Schema({ timestamps: true })
@@ -21,24 +19,9 @@ export class RewardRequest {
   @Prop({
     type: String,
     enum: RequestStatus,
-    default: RequestStatus.PENDING,
+    required: true,
   })
   status: RequestStatus;
-
-  @Prop({ default: () => new Date() })
-  requestedAt: Date;
-
-  @Prop()
-  processedAt: Date;
-
-  @Prop()
-  processedBy: string;
-
-  @Prop()
-  rejectionReason: string;
-
-  @Prop({ type: Object })
-  verificationData: Record<string, any>;
 }
 
 export const RewardRequestSchema = SchemaFactory.createForClass(RewardRequest);
