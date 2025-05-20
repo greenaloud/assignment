@@ -1,9 +1,4 @@
-import {
-  Inject,
-  Injectable,
-  NestMiddleware,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Inject, Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response } from 'express';
 import { ServiceProxy } from './service-proxy.abstract';
 import { ServiceToken } from '@app/common/constants/service.tokens';
